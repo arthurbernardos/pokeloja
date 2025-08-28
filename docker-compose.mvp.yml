@@ -42,7 +42,7 @@ services:
       - db
     networks:
       - pokeloja-network
-    command: npm run start
+    command: sh -c "npm run build && npm run start"
 
   frontend:
     build:
