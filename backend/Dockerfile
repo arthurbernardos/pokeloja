@@ -1,5 +1,9 @@
 FROM node:18-alpine
 
+# Definir variáveis de ambiente para evitar prompts interativos
+ENV NPM_CONFIG_YES=true
+ENV CI=true
+
 # Criar diretório da aplicação
 WORKDIR /app
 
@@ -7,7 +11,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar dependências
-RUN npm install
+RUN npm install --no-optional
 
 # Copiar código fonte
 COPY . .
