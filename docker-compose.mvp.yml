@@ -1,0 +1,71 @@
+services:
+  db:
+    image: postgres:15
+    container_name: pokeloja-db-mvp
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - pokeloja-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pokeloja-backend-mvp
+    environment:
+      NODE_ENV: production
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${POSTGRES_DB}
+      DATABASE_USERNAME: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_SSL: "false"
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      APP_KEYS: ${APP_KEYS}
+      HOST: "0.0.0.0"
+      PORT: 1337
+      PUBLIC_URL: "http://${SERVER_PUBLIC_IP}:1337"
+    ports:
+      - "1337:1337"
+    volumes:
+      - strapi_uploads:/app/public/uploads
+    depends_on:
+      - db
+    networks:
+      - pokeloja-network
+    command: npm run start
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pokeloja-frontend-mvp
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_STRAPI_API_URL: "http://${SERVER_PUBLIC_IP}:1337/api"
+      NEXT_PUBLIC_STRAPI_UPLOADS_URL: "http://${SERVER_PUBLIC_IP}:1337"
+    ports:
+      - "3000:3000"
+    networks:
+      - pokeloja-network
+    depends_on:
+      - backend
+    command: >
+      sh -c "npm run build && npm run start"
+
+networks:
+  pokeloja-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  strapi_uploads:
