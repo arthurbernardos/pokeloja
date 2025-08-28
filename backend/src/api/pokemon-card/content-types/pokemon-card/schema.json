@@ -1,0 +1,116 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pokemon_cards",
+  "info": {
+    "singularName": "pokemon-card",
+    "pluralName": "pokemon-cards",
+    "displayName": "Pokemon Card",
+    "description": "Cartas Pokémon para a loja"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nome": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "descricao": {
+      "type": "text"
+    },
+    "preco": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "raridade": {
+      "type": "enumeration",
+      "enum": [
+        "Comum",
+        "Incomum",
+        "Rara",
+        "Holo Rara",
+        "Ultra Rara",
+        "Secreta"
+      ],
+      "default": "Comum"
+    },
+    "tipo": {
+      "type": "enumeration",
+      "enum": [
+        "Fogo",
+        "Água",
+        "Grama",
+        "Elétrico",
+        "Psíquico",
+        "Lutador",
+        "Sombrio",
+        "Metal",
+        "Fada",
+        "Dragão",
+        "Incolor"
+      ]
+    },
+    "hp": {
+      "type": "integer",
+      "min": 30,
+      "max": 500
+    },
+    "set_nome": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "numero_carta": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "imagem": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "em_estoque": {
+      "type": "boolean",
+      "default": true
+    },
+    "quantidade_estoque": {
+      "type": "integer",
+      "min": 0,
+      "default": 1
+    },
+    "categoria": {
+      "type": "enumeration",
+      "enum": [
+        "Pokémon Básico",
+        "Pokémon Estágio 1",
+        "Pokémon Estágio 2",
+        "Pokémon-EX",
+        "Pokémon-GX",
+        "Pokémon-V",
+        "Pokémon-VMAX",
+        "Treinador",
+        "Energia"
+      ],
+      "default": "Pokémon Básico"
+    },
+    "condicao": {
+      "type": "enumeration",
+      "enum": [
+        "Mint",
+        "Near Mint",
+        "Lightly Played",
+        "Moderately Played",
+        "Heavily Played",
+        "Damaged"
+      ],
+      "default": "Near Mint"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "nome"
+    }
+  }
+}

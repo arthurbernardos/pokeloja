@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # Banco PostgreSQL
+  db:
+    image: postgres:15
+    container_name: pokeloja-db
+    environment:
+      POSTGRES_DB: pokeloja
+      POSTGRES_USER: pokeloja_user
+      POSTGRES_PASSWORD: pokeloja_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - pokeloja-network
+
+  # Backend Strapi
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pokeloja-backend
+    environment:
+      NODE_ENV: development
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: pokeloja
+      DATABASE_USERNAME: pokeloja_user
+      DATABASE_PASSWORD: pokeloja_password
+      DATABASE_SSL: false
+      JWT_SECRET: super-secret-jwt-key-for-development
+      ADMIN_JWT_SECRET: super-secret-admin-jwt-key-for-development
+      API_TOKEN_SALT: super-secret-api-token-salt-for-development
+      APP_KEYS: app-key-1,app-key-2,app-key-3,app-key-4
+      HOST: 0.0.0.0
+      PORT: 1337
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    networks:
+      - pokeloja-network
+    command: npm run develop
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pokeloja-frontend
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_STRAPI_API_URL: http://localhost:1337/api
+      NEXT_PUBLIC_STRAPI_UPLOADS_URL: http://localhost:1337
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - pokeloja-network
+    command: npm run dev
+
+networks:
+  pokeloja-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
