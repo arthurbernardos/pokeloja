@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import Banner from '@/components/Banner'
+import CardImage from '@/components/CardImage'
+import { useAnalytics } from '@/contexts/AnalyticsContext'
 
 interface PokemonCard {
   id: number
@@ -32,13 +35,21 @@ interface PokemonCard {
 }
 
 export default function Home() {
+  const { trackPageView, trackCategoryClick } = useAnalytics()
   const [cards, setCards] = useState<PokemonCard[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedRarity, setSelectedRarity] = useState('all')
+  const [selectedTCG, setSelectedTCG] = useState('pokemon')
+  const [selectedNationality, setSelectedNationality] = useState('all')
+  const [showSealed, setShowSealed] = useState(false)
+  const [popularCategories, setPopularCategories] = useState<string[]>([])
+  const [loadingPopular, setLoadingPopular] = useState(true)
 
   useEffect(() => {
     fetchCards()
+    fetchPopularCategories()
+    trackPageView('home')
   }, [])
 
   const fetchCards = async () => {
@@ -52,6 +63,28 @@ export default function Home() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchPopularCategories = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/analytics/popular-categories`)
+      const data = await response.json()
+      const categories = data.data.length > 0 
+        ? data.data.map((item: any) => item.category)
+        : ['Pokémon Básico', 'Pokémon-EX', 'Pokémon-GX', 'Pokémon-V', 'Pokémon-VMAX', 'Treinador']
+      setPopularCategories(categories)
+    } catch (error) {
+      console.error('Erro ao buscar categorias populares:', error)
+      // Fallback to default categories
+      setPopularCategories(['Pokémon Básico', 'Pokémon-EX', 'Pokémon-GX', 'Pokémon-V', 'Pokémon-VMAX', 'Treinador'])
+    } finally {
+      setLoadingPopular(false)
+    }
+  }
+
+  const handleCategoryClick = (category: string) => {
+    trackCategoryClick(category)
+    setSelectedCategory(selectedCategory === category ? 'all' : category)
   }
 
   // Filter cards based on selected filters
@@ -121,45 +154,56 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Modern Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-pokemon-blue via-pokemon-purple to-pokemon-red opacity-90"></div>
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="relative container mx-auto px-4 py-24">
-          <div className="text-center text-white">
-            <h1 className="text-6xl md:text-7xl font-bold mb-6 animate-float">
-              Poke<span className="text-pokemon-yellow-light">LS</span>
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-2xl mx-auto">
-              A melhor loja de cartas Pokémon do Brasil
-            </p>
-            <p className="text-lg mb-12 opacity-80 max-w-xl mx-auto">
-              Cartas raras, preços justos e entrega rápida para toda sua coleção
-            </p>
+
+      {/* Banner Section */}
+      <section className="py-8 container mx-auto px-4">
+        <Banner />
+      </section>
+
+      {/* TCG Selection */}
+      <section className="py-8 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Escolha seu TCG</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <button
+              onClick={() => setSelectedTCG('pokemon')}
+              className={`p-6 rounded-xl border-2 transition-all duration-300 hover:transform hover:scale-105 ${
+                selectedTCG === 'pokemon'
+                  ? 'border-pokemon-red bg-gradient-to-br from-pokemon-red/10 to-pokemon-yellow/10'
+                  : 'border-gray-200 hover:border-pokemon-red/50'
+              }`}
+            >
+              <div className="text-4xl mb-3">🎴</div>
+              <h3 className="font-bold text-lg mb-2">Pokémon TCG</h3>
+              <p className="text-sm text-gray-600">Gotta catch 'em all!</p>
+            </button>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
-                href="#cartas"
-                className="group bg-pokemon-yellow hover:bg-pokemon-yellow-light text-black px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-glow-yellow"
-              >
-                <span className="group-hover:animate-pulse">🃏 Ver Cartas</span>
-              </Link>
-              <Link 
-                href="#categorias"
-                className="bg-transparent border-2 border-white hover:bg-white hover:text-pokemon-blue text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105"
-              >
-                📦 Categorias
-              </Link>
-            </div>
+            <button
+              onClick={() => setSelectedTCG('magic')}
+              className={`p-6 rounded-xl border-2 transition-all duration-300 hover:transform hover:scale-105 ${
+                selectedTCG === 'magic'
+                  ? 'border-purple-600 bg-gradient-to-br from-purple-600/10 to-blue-600/10'
+                  : 'border-gray-200 hover:border-purple-600/50'
+              }`}
+            >
+              <div className="text-4xl mb-3">🪄</div>
+              <h3 className="font-bold text-lg mb-2">Magic: The Gathering</h3>
+              <p className="text-sm text-gray-600">O primeiro e maior TCG</p>
+            </button>
+            
+            <button
+              onClick={() => setSelectedTCG('yugioh')}
+              className={`p-6 rounded-xl border-2 transition-all duration-300 hover:transform hover:scale-105 ${
+                selectedTCG === 'yugioh'
+                  ? 'border-amber-500 bg-gradient-to-br from-amber-500/10 to-orange-500/10'
+                  : 'border-gray-200 hover:border-amber-500/50'
+              }`}
+            >
+              <div className="text-4xl mb-3">🎯</div>
+              <h3 className="font-bold text-lg mb-2">Yu-Gi-Oh! TCG</h3>
+              <p className="text-sm text-gray-600">É hora do duelo!</p>
+            </button>
           </div>
-        </div>
-        
-        {/* Floating decoration */}
-        <div className="absolute top-10 left-10 animate-bounce-slow opacity-20">
-          <div className="w-16 h-16 bg-pokemon-yellow rounded-full"></div>
-        </div>
-        <div className="absolute bottom-10 right-10 animate-pulse-slow opacity-20">
-          <div className="w-12 h-12 bg-pokemon-red rounded-full"></div>
         </div>
       </section>
 
@@ -170,20 +214,30 @@ export default function Home() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
             {/* Category buttons */}
-            {['Pokémon Básico', 'Pokémon-EX', 'Pokémon-GX', 'Pokémon-V', 'Pokémon-VMAX', 'Treinador'].map(category => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(selectedCategory === category ? 'all' : category)}
-                className={`p-4 rounded-xl border-2 transition-all duration-300 hover:transform hover:scale-105 ${
-                  selectedCategory === category
-                    ? 'border-pokemon-blue bg-pokemon-blue text-white shadow-glow-blue'
-                    : 'border-gray-200 bg-white text-gray-700 hover:border-pokemon-blue-light hover:shadow-md'
-                }`}
-              >
-                <div className="font-semibold text-sm">{category.split(' ')[0]}</div>
-                <div className="text-xs opacity-80">{category.split(' ').slice(1).join(' ')}</div>
-              </button>
-            ))}
+            {loadingPopular ? (
+              // Loading skeleton
+              [...Array(6)].map((_, i) => (
+                <div key={i} className="p-4 rounded-xl border-2 border-gray-200 bg-gray-100 animate-pulse">
+                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-300 rounded w-2/3"></div>
+                </div>
+              ))
+            ) : (
+              popularCategories.map(category => (
+                <button
+                  key={category}
+                  onClick={() => handleCategoryClick(category)}
+                  className={`p-4 rounded-xl border-2 transition-all duration-300 hover:transform hover:scale-105 ${
+                    selectedCategory === category
+                      ? 'border-pokemon-blue bg-pokemon-blue text-white shadow-glow-blue'
+                      : 'border-gray-200 bg-white text-gray-700 hover:border-pokemon-blue-light hover:shadow-md'
+                  }`}
+                >
+                  <div className="font-semibold text-sm">{category.split(' ')[0]}</div>
+                  <div className="text-xs opacity-80">{category.split(' ').slice(1).join(' ')}</div>
+                </button>
+              ))
+            )}
           </div>
 
           {/* Rarity filters */}
@@ -237,25 +291,20 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {filteredCards.slice(0, 12).map((card) => (
-                <div 
+                <Link
+                  href={`/carta/${card.id}`}
                   key={card.id} 
-                  className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] overflow-hidden cursor-pointer"
+                  className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] overflow-hidden cursor-pointer block"
                 >
                   <div className="relative">
                     <div className="aspect-[3/4] bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center overflow-hidden">
-                      {card.attributes.imagem?.data ? (
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_STRAPI_UPLOADS_URL}${card.attributes.imagem.data.attributes.url}`}
-                          alt={card.attributes.nome}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="text-center p-6">
-                          <div className="text-4xl mb-2">🃏</div>
-                          <p className="font-semibold text-gray-600">{card.attributes.nome}</p>
-                          <p className="text-sm text-gray-500">{card.attributes.tipo}</p>
-                        </div>
-                      )}
+                      <CardImage
+                        src={card.attributes.imagem?.data ? `${process.env.NEXT_PUBLIC_STRAPI_UPLOADS_URL}${card.attributes.imagem.data.attributes.url}` : undefined}
+                        alt={card.attributes.nome}
+                        className="w-full h-full"
+                        nome={card.attributes.nome}
+                        tipo={card.attributes.tipo}
+                      />
                     </div>
                     
                     {/* Hover overlay */}
@@ -269,6 +318,13 @@ export default function Home() {
                     {!card.attributes.em_estoque && (
                       <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
                         Esgotado
+                      </div>
+                    )}
+                    
+                    {/* Sealed badge */}
+                    {card.attributes.lacrado && (
+                      <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        Lacrado
                       </div>
                     )}
                   </div>
@@ -313,10 +369,19 @@ export default function Home() {
                         <div className="text-xs text-gray-500 mt-1">
                           {card.attributes.condicao}
                         </div>
+                        {card.attributes.nacionalidade && (
+                          <div className="text-xs text-gray-600 mt-1">
+                            {card.attributes.nacionalidade === 'Português' && '🇧🇷'}
+                            {card.attributes.nacionalidade === 'Inglês' && '🇺🇸'}
+                            {card.attributes.nacionalidade === 'Japonês' && '🇯🇵'}
+                            {card.attributes.nacionalidade === 'Chinês' && '🇨🇳'}
+                            {' '}{card.attributes.nacionalidade}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

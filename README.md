@@ -1,4 +1,4 @@
-# PokeLS - Loja de Cartas Pokémon
+# Kaiyuu TCG - Loja de Cartas Pokémon
 
 ## Descrição
 

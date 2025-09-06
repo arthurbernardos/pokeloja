@@ -1,0 +1,58 @@
+# Production Dockerfile for Next.js Frontend
+FROM node:20-alpine AS base
+
+# Install dependencies
+FROM base AS deps
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Build the application
+FROM base AS builder
+WORKDIR /app
+
+# Copy package files and install all dependencies (including dev)
+COPY package*.json ./
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build arguments for API URLs
+ARG NEXT_PUBLIC_STRAPI_API_URL
+ARG NEXT_PUBLIC_STRAPI_UPLOADS_URL
+
+# Set environment variables for build
+ENV NEXT_PUBLIC_STRAPI_API_URL=$NEXT_PUBLIC_STRAPI_API_URL
+ENV NEXT_PUBLIC_STRAPI_UPLOADS_URL=$NEXT_PUBLIC_STRAPI_UPLOADS_URL
+ENV NODE_ENV=production
+
+# Build the Next.js application
+RUN npm run build
+
+# Production runner
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy built application
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

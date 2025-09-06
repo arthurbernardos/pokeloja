@@ -1,0 +1,98 @@
+{
+  "kind": "collectionType",
+  "collectionName": "payments",
+  "info": {
+    "singularName": "payment",
+    "pluralName": "payments",
+    "displayName": "Payment",
+    "description": "Payment transactions"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "asaas_payment_id": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "asaas_customer_id": {
+      "type": "string",
+      "required": true
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order"
+    },
+    "payment_type": {
+      "type": "enumeration",
+      "enum": [
+        "PIX",
+        "CREDIT_CARD",
+        "BOLETO"
+      ],
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "PENDING",
+        "RECEIVED",
+        "CONFIRMED",
+        "OVERDUE",
+        "REFUNDED",
+        "RECEIVED_IN_CASH_UNDONE",
+        "CHARGEBACK_REQUESTED",
+        "CHARGEBACK_DISPUTE",
+        "AWAITING_CHARGEBACK_REVERSAL",
+        "DUNNING_REQUESTED",
+        "DUNNING_RECEIVED",
+        "AWAITING_RISK_ANALYSIS"
+      ],
+      "default": "PENDING",
+      "required": true
+    },
+    "value": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "net_value": {
+      "type": "decimal"
+    },
+    "due_date": {
+      "type": "datetime",
+      "required": true
+    },
+    "payment_date": {
+      "type": "datetime"
+    },
+    "installment_count": {
+      "type": "integer",
+      "default": 1
+    },
+    "pix_qr_code": {
+      "type": "text"
+    },
+    "pix_code": {
+      "type": "text"
+    },
+    "boleto_url": {
+      "type": "string"
+    },
+    "invoice_url": {
+      "type": "string"
+    },
+    "external_reference": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "asaas_raw_response": {
+      "type": "json"
+    }
+  }
+}

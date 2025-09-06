@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "customers",
+  "info": {
+    "singularName": "customer",
+    "pluralName": "customers",
+    "displayName": "Customer",
+    "description": "Clientes da loja"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nome": {
+      "type": "string",
+      "required": true,
+      "maxLength": 150
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "telefone": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "cpf": {
+      "type": "string",
+      "unique": true,
+      "maxLength": 14
+    },
+    "endereco": {
+      "type": "text"
+    },
+    "cidade": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "estado": {
+      "type": "string",
+      "maxLength": 2
+    },
+    "cep": {
+      "type": "string",
+      "maxLength": 9
+    },
+    "data_nascimento": {
+      "type": "date"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
+      "mappedBy": "customer"
+    }
+  }
+}

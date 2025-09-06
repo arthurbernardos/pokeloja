@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "analytics",
+  "info": {
+    "singularName": "analytic",
+    "pluralName": "analytics",
+    "displayName": "Analytics",
+    "description": "Track user interactions and site analytics"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "event_type": {
+      "type": "enumeration",
+      "enum": [
+        "page_view",
+        "product_view",
+        "category_click",
+        "search",
+        "add_to_cart",
+        "purchase"
+      ],
+      "required": true
+    },
+    "event_data": {
+      "type": "json"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string",
+      "required": true
+    },
+    "ip_address": {
+      "type": "string"
+    },
+    "user_agent": {
+      "type": "text"
+    },
+    "timestamp": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}

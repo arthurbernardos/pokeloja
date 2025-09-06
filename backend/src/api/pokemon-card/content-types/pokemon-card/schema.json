@@ -111,6 +111,22 @@
     "slug": {
       "type": "uid",
       "targetField": "nome"
+    },
+    "lacrado": {
+      "type": "boolean",
+      "default": false,
+      "description": "Indica se o produto está lacrado (sealed)"
+    },
+    "nacionalidade": {
+      "type": "enumeration",
+      "enum": [
+        "Inglês",
+        "Japonês",
+        "Chinês",
+        "Português"
+      ],
+      "default": "Português",
+      "required": true
     }
   }
 }

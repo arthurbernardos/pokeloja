@@ -25,3 +25,60 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+/* Fix form input colors */
+input, select, textarea {
+  color: #374151 !important; /* gray-700 */
+}
+
+input::placeholder, textarea::placeholder {
+  color: #9CA3AF !important; /* gray-400 */
+}
+
+/* Ensure focus states maintain proper text color */
+input:focus, select:focus, textarea:focus {
+  color: #374151 !important; /* gray-700 */
+}
+
+/* Toast notification animation */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}

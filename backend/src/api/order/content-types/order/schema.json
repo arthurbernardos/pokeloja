@@ -1,0 +1,71 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "Order",
+    "description": "Pedidos da loja"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "numero_pedido": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "data_pedido": {
+      "type": "datetime",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "Pendente",
+        "Processando",
+        "Enviado",
+        "Entregue",
+        "Cancelado"
+      ],
+      "default": "Pendente"
+    },
+    "valor_total": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "valor_frete": {
+      "type": "decimal",
+      "default": 0,
+      "min": 0
+    },
+    "forma_pagamento": {
+      "type": "enumeration",
+      "enum": [
+        "Cartão de Crédito",
+        "Cartão de Débito",
+        "PIX",
+        "Boleto"
+      ]
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::customer.customer",
+      "inversedBy": "orders"
+    },
+    "itens": {
+      "type": "json",
+      "required": true
+    },
+    "endereco_entrega": {
+      "type": "text"
+    },
+    "observacoes": {
+      "type": "text"
+    }
+  }
+}

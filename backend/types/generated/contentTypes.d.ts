@@ -362,112 +362,6 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
-export interface ApiPokemonCardPokemonCard extends Schema.CollectionType {
-  collectionName: 'pokemon_cards';
-  info: {
-    singularName: 'pokemon-card';
-    pluralName: 'pokemon-cards';
-    displayName: 'Pokemon Card';
-    description: 'Cartas Pok\u00E9mon para a loja';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    nome: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    descricao: Attribute.Text;
-    preco: Attribute.Decimal &
-      Attribute.Required &
-      Attribute.SetMinMax<{
-        min: 0;
-      }>;
-    raridade: Attribute.Enumeration<
-      ['Comum', 'Incomum', 'Rara', 'Holo Rara', 'Ultra Rara', 'Secreta']
-    > &
-      Attribute.DefaultTo<'Comum'>;
-    tipo: Attribute.Enumeration<
-      [
-        'Fogo',
-        '\u00C1gua',
-        'Grama',
-        'El\u00E9trico',
-        'Ps\u00EDquico',
-        'Lutador',
-        'Sombrio',
-        'Metal',
-        'Fada',
-        'Drag\u00E3o',
-        'Incolor'
-      ]
-    >;
-    hp: Attribute.Integer &
-      Attribute.SetMinMax<{
-        min: 30;
-        max: 500;
-      }>;
-    set_nome: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }>;
-    numero_carta: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 20;
-      }>;
-    imagem: Attribute.Media;
-    em_estoque: Attribute.Boolean & Attribute.DefaultTo<true>;
-    quantidade_estoque: Attribute.Integer &
-      Attribute.SetMinMax<{
-        min: 0;
-      }> &
-      Attribute.DefaultTo<1>;
-    categoria: Attribute.Enumeration<
-      [
-        'Pok\u00E9mon B\u00E1sico',
-        'Pok\u00E9mon Est\u00E1gio 1',
-        'Pok\u00E9mon Est\u00E1gio 2',
-        'Pok\u00E9mon-EX',
-        'Pok\u00E9mon-GX',
-        'Pok\u00E9mon-V',
-        'Pok\u00E9mon-VMAX',
-        'Treinador',
-        'Energia'
-      ]
-    > &
-      Attribute.DefaultTo<'Pok\u00E9mon B\u00E1sico'>;
-    condicao: Attribute.Enumeration<
-      [
-        'Mint',
-        'Near Mint',
-        'Lightly Played',
-        'Moderately Played',
-        'Heavily Played',
-        'Damaged'
-      ]
-    > &
-      Attribute.DefaultTo<'Near Mint'>;
-    slug: Attribute.UID<'api::pokemon-card.pokemon-card', 'nome'>;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::pokemon-card.pokemon-card',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::pokemon-card.pokemon-card',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -783,6 +677,360 @@ export interface PluginI18NLocale extends Schema.CollectionType {
   };
 }
 
+export interface ApiAnalyticAnalytic extends Schema.CollectionType {
+  collectionName: 'analytics';
+  info: {
+    singularName: 'analytic';
+    pluralName: 'analytics';
+    displayName: 'Analytics';
+    description: 'Track user interactions and site analytics';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    event_type: Attribute.Enumeration<
+      [
+        'page_view',
+        'product_view',
+        'category_click',
+        'search',
+        'add_to_cart',
+        'purchase'
+      ]
+    > &
+      Attribute.Required;
+    event_data: Attribute.JSON;
+    user_id: Attribute.String;
+    session_id: Attribute.String & Attribute.Required;
+    ip_address: Attribute.String;
+    user_agent: Attribute.Text;
+    timestamp: Attribute.DateTime & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::analytic.analytic',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::analytic.analytic',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiCustomerCustomer extends Schema.CollectionType {
+  collectionName: 'customers';
+  info: {
+    singularName: 'customer';
+    pluralName: 'customers';
+    displayName: 'Customer';
+    description: 'Clientes da loja';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    nome: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }>;
+    email: Attribute.Email & Attribute.Required & Attribute.Unique;
+    telefone: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    cpf: Attribute.String &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        maxLength: 14;
+      }>;
+    endereco: Attribute.Text;
+    cidade: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    estado: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 2;
+      }>;
+    cep: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 9;
+      }>;
+    data_nascimento: Attribute.Date;
+    orders: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::order.order'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::customer.customer',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::customer.customer',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiOrderOrder extends Schema.CollectionType {
+  collectionName: 'orders';
+  info: {
+    singularName: 'order';
+    pluralName: 'orders';
+    displayName: 'Order';
+    description: 'Pedidos da loja';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    numero_pedido: Attribute.String & Attribute.Required & Attribute.Unique;
+    data_pedido: Attribute.DateTime & Attribute.Required;
+    status: Attribute.Enumeration<
+      ['Pendente', 'Processando', 'Enviado', 'Entregue', 'Cancelado']
+    > &
+      Attribute.DefaultTo<'Pendente'>;
+    valor_total: Attribute.Decimal &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 0;
+      }>;
+    valor_frete: Attribute.Decimal &
+      Attribute.SetMinMax<{
+        min: 0;
+      }> &
+      Attribute.DefaultTo<0>;
+    forma_pagamento: Attribute.Enumeration<
+      [
+        'Cart\u00E3o de Cr\u00E9dito',
+        'Cart\u00E3o de D\u00E9bito',
+        'PIX',
+        'Boleto'
+      ]
+    >;
+    customer: Attribute.Relation<
+      'api::order.order',
+      'manyToOne',
+      'api::customer.customer'
+    >;
+    itens: Attribute.JSON & Attribute.Required;
+    endereco_entrega: Attribute.Text;
+    observacoes: Attribute.Text;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::order.order',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::order.order',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPaymentPayment extends Schema.CollectionType {
+  collectionName: 'payments';
+  info: {
+    singularName: 'payment';
+    pluralName: 'payments';
+    displayName: 'Payment';
+    description: 'Payment transactions';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    asaas_payment_id: Attribute.String & Attribute.Required & Attribute.Unique;
+    asaas_customer_id: Attribute.String & Attribute.Required;
+    order: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'api::order.order'
+    >;
+    payment_type: Attribute.Enumeration<['PIX', 'CREDIT_CARD', 'BOLETO']> &
+      Attribute.Required;
+    status: Attribute.Enumeration<
+      [
+        'PENDING',
+        'RECEIVED',
+        'CONFIRMED',
+        'OVERDUE',
+        'REFUNDED',
+        'RECEIVED_IN_CASH_UNDONE',
+        'CHARGEBACK_REQUESTED',
+        'CHARGEBACK_DISPUTE',
+        'AWAITING_CHARGEBACK_REVERSAL',
+        'DUNNING_REQUESTED',
+        'DUNNING_RECEIVED',
+        'AWAITING_RISK_ANALYSIS'
+      ]
+    > &
+      Attribute.Required &
+      Attribute.DefaultTo<'PENDING'>;
+    value: Attribute.Decimal &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 0;
+      }>;
+    net_value: Attribute.Decimal;
+    due_date: Attribute.DateTime & Attribute.Required;
+    payment_date: Attribute.DateTime;
+    installment_count: Attribute.Integer & Attribute.DefaultTo<1>;
+    pix_qr_code: Attribute.Text;
+    pix_code: Attribute.Text;
+    boleto_url: Attribute.String;
+    invoice_url: Attribute.String;
+    external_reference: Attribute.String;
+    description: Attribute.Text;
+    asaas_raw_response: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPokemonCardPokemonCard extends Schema.CollectionType {
+  collectionName: 'pokemon_cards';
+  info: {
+    singularName: 'pokemon-card';
+    pluralName: 'pokemon-cards';
+    displayName: 'Pokemon Card';
+    description: 'Cartas Pok\u00E9mon para a loja';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    nome: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    descricao: Attribute.Text;
+    preco: Attribute.Decimal &
+      Attribute.Required &
+      Attribute.SetMinMax<{
+        min: 0;
+      }>;
+    raridade: Attribute.Enumeration<
+      ['Comum', 'Incomum', 'Rara', 'Holo Rara', 'Ultra Rara', 'Secreta']
+    > &
+      Attribute.DefaultTo<'Comum'>;
+    tipo: Attribute.Enumeration<
+      [
+        'Fogo',
+        '\u00C1gua',
+        'Grama',
+        'El\u00E9trico',
+        'Ps\u00EDquico',
+        'Lutador',
+        'Sombrio',
+        'Metal',
+        'Fada',
+        'Drag\u00E3o',
+        'Incolor'
+      ]
+    >;
+    hp: Attribute.Integer &
+      Attribute.SetMinMax<{
+        min: 30;
+        max: 500;
+      }>;
+    set_nome: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 100;
+      }>;
+    numero_carta: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 20;
+      }>;
+    imagem: Attribute.Media;
+    em_estoque: Attribute.Boolean & Attribute.DefaultTo<true>;
+    quantidade_estoque: Attribute.Integer &
+      Attribute.SetMinMax<{
+        min: 0;
+      }> &
+      Attribute.DefaultTo<1>;
+    categoria: Attribute.Enumeration<
+      [
+        'Pok\u00E9mon B\u00E1sico',
+        'Pok\u00E9mon Est\u00E1gio 1',
+        'Pok\u00E9mon Est\u00E1gio 2',
+        'Pok\u00E9mon-EX',
+        'Pok\u00E9mon-GX',
+        'Pok\u00E9mon-V',
+        'Pok\u00E9mon-VMAX',
+        'Treinador',
+        'Energia'
+      ]
+    > &
+      Attribute.DefaultTo<'Pok\u00E9mon B\u00E1sico'>;
+    condicao: Attribute.Enumeration<
+      [
+        'Mint',
+        'Near Mint',
+        'Lightly Played',
+        'Moderately Played',
+        'Heavily Played',
+        'Damaged'
+      ]
+    > &
+      Attribute.DefaultTo<'Near Mint'>;
+    slug: Attribute.UID<'api::pokemon-card.pokemon-card', 'nome'>;
+    lacrado: Attribute.Boolean & Attribute.DefaultTo<false>;
+    nacionalidade: Attribute.Enumeration<
+      ['Ingl\u00EAs', 'Japon\u00EAs', 'Chin\u00EAs', 'Portugu\u00EAs']
+    > &
+      Attribute.Required &
+      Attribute.DefaultTo<'Portugu\u00EAs'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::pokemon-card.pokemon-card',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::pokemon-card.pokemon-card',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -793,13 +1041,17 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
-      'api::pokemon-card.pokemon-card': ApiPokemonCardPokemonCard;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'plugin::i18n.locale': PluginI18NLocale;
+      'api::analytic.analytic': ApiAnalyticAnalytic;
+      'api::customer.customer': ApiCustomerCustomer;
+      'api::order.order': ApiOrderOrder;
+      'api::payment.payment': ApiPaymentPayment;
+      'api::pokemon-card.pokemon-card': ApiPokemonCardPokemonCard;
     }
   }
 }
