@@ -4,7 +4,7 @@ const nextConfig = {
   output: 'standalone',
   
   images: {
-    domains: ['localhost', 'pokeloja-backend', 'api.kaiyuutcg.com.br'],
+    domains: ['localhost', 'pokeloja-backend', 'api.kaiyuutcg.com.br', '35.223.253.42'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -17,14 +17,18 @@ const nextConfig = {
         port: '1337',
       },
       {
+        protocol: 'http',
+        hostname: '35.223.253.42',
+      },
+      {
         protocol: 'https',
         hostname: 'api.kaiyuutcg.com.br',
       },
     ],
   },
   env: {
-    NEXT_PUBLIC_STRAPI_API_URL: process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337/api',
-    NEXT_PUBLIC_STRAPI_UPLOADS_URL: process.env.NEXT_PUBLIC_STRAPI_UPLOADS_URL || 'http://localhost:1337',
+    NEXT_PUBLIC_STRAPI_API_URL: process.env.NEXT_PUBLIC_STRAPI_API_URL || '/api',
+    NEXT_PUBLIC_STRAPI_UPLOADS_URL: process.env.NEXT_PUBLIC_STRAPI_UPLOADS_URL || '',
   },
 }
 

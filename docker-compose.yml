@@ -62,8 +62,8 @@ services:
     container_name: pokeloja-frontend
     environment:
       NODE_ENV: development
-      NEXT_PUBLIC_STRAPI_API_URL: http://localhost:1337/api
-      NEXT_PUBLIC_STRAPI_UPLOADS_URL: http://localhost:1337
+      NEXT_PUBLIC_STRAPI_API_URL: /api
+      NEXT_PUBLIC_STRAPI_UPLOADS_URL: ""
     ports:
       - "3000:3000"
     volumes:
