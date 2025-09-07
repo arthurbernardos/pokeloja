@@ -76,6 +76,21 @@ services:
       - pokeloja-network
     command: npm run dev
 
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: pokeloja-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx-simple.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - pokeloja-network
+
 networks:
   pokeloja-network:
     driver: bridge
