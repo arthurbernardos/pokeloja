@@ -67,16 +67,16 @@ EOF
 echo "🐳 Starting Docker containers..."
 
 # Stop existing containers
-docker-compose down
+docker compose down
 
 # Start containers
-docker-compose up -d
+docker compose up -d
 
 echo "⏳ Waiting for services to start..."
 sleep 10
 
 # Check if services are running
-if docker-compose ps | grep -q "Up"; then
+if docker compose ps | grep -q "Up"; then
     echo "✅ Deployment successful!"
     echo ""
     echo "🌐 Access your store at:"
@@ -86,6 +86,6 @@ if docker-compose ps | grep -q "Up"; then
     echo ""
     echo "🔗 When domain is ready: https://kaiyuutcg.com.br"
 else
-    echo "❌ Some services failed to start. Check logs with: docker-compose logs"
+    echo "❌ Some services failed to start. Check logs with: docker compose logs"
     exit 1
 fi
