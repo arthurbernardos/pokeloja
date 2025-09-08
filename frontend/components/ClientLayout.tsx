@@ -46,15 +46,14 @@ function Navigation() {
   return (
     <nav className="bg-pokemon-blue dark:bg-gray-900 text-white p-4 shadow-lg sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+          <Link href="/" className="hover:opacity-90 transition-opacity">
             <Image 
               src="/images/Selo_KAIRYUU.png" 
               alt="Kairyuu TCG Logo" 
-              width={40} 
-              height={40}
+              width={50} 
+              height={50}
               className="rounded-full"
             />
-            <span className="text-2xl font-bold text-white">Kairyuu TCG</span>
           </Link>
           <div className="flex items-center space-x-6">
             <Link href="/" className="hover:text-pokemon-yellow transition-colors">

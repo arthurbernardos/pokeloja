@@ -42,6 +42,13 @@ services:
       # URLs for webhook configuration
       PUBLIC_URL: ${PUBLIC_URL:-http://localhost:1337}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      # Email configuration
+      SMTP_HOST: ${SMTP_HOST:-smtp.resend.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-resend}
+      SMTP_PASS: ${SMTP_PASS}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@kairyuutcg.com.br}
+      FROM_EMAIL: ${FROM_EMAIL:-noreply@kairyuutcg.com.br}
     ports:
       - "1337:1337"
     volumes:
@@ -83,8 +90,10 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx-simple.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
       - frontend
       - backend

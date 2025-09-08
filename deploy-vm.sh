@@ -9,8 +9,10 @@ echo "🚀 Starting deployment..."
 if [ -n "$1" ]; then
     export ASAAS_API_KEY="$1"
     echo "🔑 Using provided Asaas API key"
-elif [ -z "$ASAAS_API_KEY" ]; then
-    echo "⚠️  Warning: No Asaas API key provided. Payment features will not work."
+elif [ -n "$ASAAS_API_KEY" ]; then
+    echo "🔑 Using Asaas API key from environment"
+else
+    echo "⚠️  Warning: No Asaas API key found. Payment features will not work."
     echo "   Usage: ./deploy-vm.sh YOUR_ASAAS_API_KEY"
     echo "   Or set: export ASAAS_API_KEY=your_key"
 fi

@@ -5,6 +5,7 @@
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
+const emailService = require('../../../services/email');
 
 module.exports = createCoreController('api::order.order', ({ strapi }) => ({
   async create(ctx) {
@@ -80,6 +81,18 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
             estoque: product.estoque - item.quantity
           }
         });
+      }
+
+      // 5. SEND EMAIL NOTIFICATIONS
+      try {
+        // Send confirmation to customer
+        await emailService.sendOrderConfirmation(order, ctx.state.user);
+        
+        // Notify admin
+        await emailService.notifyAdminNewOrder(order, ctx.state.user);
+      } catch (emailError) {
+        console.error('Email notification error:', emailError);
+        // Don't fail the order if email fails
       }
 
       return {
