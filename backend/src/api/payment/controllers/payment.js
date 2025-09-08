@@ -8,6 +8,11 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
     try {
       const { orderId, customerData } = ctx.request.body;
       
+      // Verify user is authenticated
+      if (!ctx.state.user) {
+        return ctx.unauthorized('Login necessário');
+      }
+      
       // Get order details
       const order = await strapi.db.query('api::order.order').findOne({
         where: { id: orderId },
@@ -16,6 +21,11 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
 
       if (!order) {
         return ctx.badRequest('Pedido não encontrado');
+      }
+
+      // Verify order belongs to authenticated user
+      if (order.customer.id !== ctx.state.user.id) {
+        return ctx.forbidden('Este pedido não pertence a você');
       }
 
       // Create or get customer in Asaas
@@ -97,13 +107,24 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
     try {
       const { orderId, customerData, cardData } = ctx.request.body;
       
+      // Verify user is authenticated
+      if (!ctx.state.user) {
+        return ctx.unauthorized('Login necessário');
+      }
+      
       // Get order details
       const order = await strapi.db.query('api::order.order').findOne({
-        where: { id: orderId }
+        where: { id: orderId },
+        populate: ['customer']
       });
 
       if (!order) {
         return ctx.badRequest('Pedido não encontrado');
+      }
+
+      // Verify order belongs to authenticated user
+      if (order.customer.id !== ctx.state.user.id) {
+        return ctx.forbidden('Este pedido não pertence a você');
       }
 
       // Validate card data
@@ -198,13 +219,24 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
     try {
       const { orderId, customerData } = ctx.request.body;
       
+      // Verify user is authenticated
+      if (!ctx.state.user) {
+        return ctx.unauthorized('Login necessário');
+      }
+      
       // Get order details
       const order = await strapi.db.query('api::order.order').findOne({
-        where: { id: orderId }
+        where: { id: orderId },
+        populate: ['customer']
       });
 
       if (!order) {
         return ctx.badRequest('Pedido não encontrado');
+      }
+
+      // Verify order belongs to authenticated user
+      if (order.customer.id !== ctx.state.user.id) {
+        return ctx.forbidden('Este pedido não pertence a você');
       }
 
       // Create or get customer in Asaas

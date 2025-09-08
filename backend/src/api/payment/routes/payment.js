@@ -9,6 +9,9 @@ module.exports = {
       config: {
         policies: [],
         middlewares: [],
+        auth: {
+          scope: ['authenticated']
+        }
       },
     },
     {
@@ -18,6 +21,9 @@ module.exports = {
       config: {
         policies: [],
         middlewares: [],
+        auth: {
+          scope: ['authenticated']
+        }
       },
     },
     {
@@ -27,6 +33,9 @@ module.exports = {
       config: {
         policies: [],
         middlewares: [],
+        auth: {
+          scope: ['authenticated']
+        }
       },
     },
     {
