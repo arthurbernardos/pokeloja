@@ -4,19 +4,42 @@ const nodemailer = require('nodemailer');
 
 class EmailService {
   constructor() {
-    // Configure your SMTP settings here
-    this.transporter = nodemailer.createTransporter({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: process.env.SMTP_PORT || 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: process.env.SMTP_USER, // your email
-        pass: process.env.SMTP_PASS, // your app password
-      },
-    });
+    // Only create transporter if SMTP is configured
+    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+      this.transporter = nodemailer.createTransporter({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT || 587,
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+      this.emailEnabled = true;
+    } else {
+      console.log('📧 Email not configured - emails will be logged only');
+      this.emailEnabled = false;
+    }
 
     this.adminEmail = process.env.ADMIN_EMAIL || 'admin@kairyuutcg.com.br';
     this.fromEmail = process.env.FROM_EMAIL || 'noreply@kairyuutcg.com.br';
+  }
+
+  async sendEmail(mailOptions) {
+    if (!this.emailEnabled) {
+      console.log('📧 EMAIL WOULD BE SENT:');
+      console.log('To:', mailOptions.to);
+      console.log('Subject:', mailOptions.subject);
+      console.log('Content:', mailOptions.html?.substring(0, 100) + '...');
+      return;
+    }
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log('📧 Email sent to:', mailOptions.to);
+    } catch (error) {
+      console.error('❌ Email error:', error);
+    }
   }
 
   async sendWelcomeEmail(user) {
