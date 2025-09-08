@@ -1,4 +1,4 @@
-# 🌐 Domain Setup for Kaiyuu TCG
+# 🌐 Domain Setup for Kaiyruu TCG
 
 ## 🎯 **Quick Overview - 3 Options:**
 
@@ -25,7 +25,7 @@ A       @       YOUR_GCP_VM_IP       300
 A       www     YOUR_GCP_VM_IP       300
 ```
 
-**Example with `kaiyuutcg.com`:**
+**Example with `kaiyruutcg.com`:**
 ```dns
 A       @       34.123.45.67         300
 A       www     34.123.45.67         300
@@ -35,7 +35,7 @@ A       www     34.123.45.67         300
 
 ```bash
 # Deploy with domain instead of IP
-./deploy-docker.sh kaiyuutcg.com your_asaas_api_key
+./deploy-docker.sh kaiyruutcg.com your_asaas_api_key
 
 # This updates all configs automatically
 docker-compose up -d
@@ -43,8 +43,8 @@ docker-compose up -d
 
 ### **Step 4: Test**
 - Wait 15-30 minutes for DNS propagation
-- Visit: `http://kaiyuutcg.com:3000`
-- Admin: `http://kaiyuutcg.com:1337/admin`
+- Visit: `http://kaiyruutcg.com:3000`
+- Admin: `http://kaiyruutcg.com:1337/admin`
 
 ---
 
@@ -60,10 +60,10 @@ docker-compose up -d
 
 #### **1. Reserve Static IP**
 ```bash
-gcloud compute addresses create kaiyuu-ip --global
+gcloud compute addresses create kaiyruu-ip --global
 
 # Get the IP
-gcloud compute addresses describe kaiyuu-ip --global
+gcloud compute addresses describe kaiyruu-ip --global
 ```
 
 #### **2. Update DNS to Point to Static IP**
@@ -75,35 +75,35 @@ A       www     YOUR_STATIC_IP       300
 #### **3. Create Load Balancer**
 ```bash
 # Create health check
-gcloud compute health-checks create http kaiyuu-health-check \
+gcloud compute health-checks create http kaiyruu-health-check \
     --port 3000 \
     --request-path /
 
 # Create backend service
-gcloud compute backend-services create kaiyuu-backend \
+gcloud compute backend-services create kaiyruu-backend \
     --protocol HTTP \
-    --health-checks kaiyuu-health-check \
+    --health-checks kaiyruu-health-check \
     --global
 
 # Add your VM to backend
-gcloud compute backend-services add-backend kaiyuu-backend \
+gcloud compute backend-services add-backend kaiyruu-backend \
     --instance-group your-vm-name \
     --instance-group-zone your-zone \
     --global
 
 # Create URL map
-gcloud compute url-maps create kaiyuu-map \
-    --default-service kaiyuu-backend
+gcloud compute url-maps create kaiyruu-map \
+    --default-service kaiyruu-backend
 
 # Create target proxy
-gcloud compute target-http-proxies create kaiyuu-proxy \
-    --url-map kaiyuu-map
+gcloud compute target-http-proxies create kaiyruu-proxy \
+    --url-map kaiyruu-map
 
 # Create forwarding rule
-gcloud compute forwarding-rules create kaiyuu-forwarding-rule \
-    --address kaiyuu-ip \
+gcloud compute forwarding-rules create kaiyruu-forwarding-rule \
+    --address kaiyruu-ip \
     --global \
-    --target-http-proxy kaiyuu-proxy \
+    --target-http-proxy kaiyruu-proxy \
     --ports 80
 ```
 
@@ -138,17 +138,17 @@ A       www     YOUR_GCP_VM_IP    ✅ Proxied
 In Cloudflare → Page Rules:
 
 ```
-kaiyuutcg.com/*
+kaiyruutcg.com/*
 - Forwarding URL: 301
-- Destination: https://kaiyuutcg.com:3000/$1
+- Destination: https://kaiyruutcg.com:3000/$1
 
-kaiyuutcg.com/admin*  
+kaiyruutcg.com/admin*  
 - Forwarding URL: 301
-- Destination: https://kaiyuutcg.com:1337/admin$1
+- Destination: https://kaiyruutcg.com:1337/admin$1
 
-kaiyuutcg.com/api/*
+kaiyruutcg.com/api/*
 - Forwarding URL: 301  
-- Destination: https://kaiyuutcg.com:1337/api/$1
+- Destination: https://kaiyruutcg.com:1337/api/$1
 ```
 
 #### **4. Enable SSL**
@@ -162,22 +162,22 @@ Cloudflare → SSL/TLS → Overview:
 
 ### **Update Docker Environment:**
 ```bash
-# For kaiyuutcg.com example
-./deploy-docker.sh kaiyuutcg.com your_asaas_api_key
+# For kaiyruutcg.com example
+./deploy-docker.sh kaiyruutcg.com your_asaas_api_key
 ```
 
 ### **Manual Configuration:**
 Update `.env`:
 ```env
 ASAAS_API_KEY=your_key_here
-PUBLIC_URL=https://kaiyuutcg.com
-FRONTEND_URL=https://kaiyuutcg.com
+PUBLIC_URL=https://kaiyruutcg.com
+FRONTEND_URL=https://kaiyruutcg.com
 ```
 
 Update `frontend/.env.local`:
 ```env
-NEXT_PUBLIC_STRAPI_API_URL=https://kaiyuutcg.com/api
-NEXT_PUBLIC_STRAPI_UPLOADS_URL=https://kaiyuutcg.com
+NEXT_PUBLIC_STRAPI_API_URL=https://kaiyruutcg.com/api
+NEXT_PUBLIC_STRAPI_UPLOADS_URL=https://kaiyruutcg.com
 ```
 
 ### **Restart Services:**
@@ -192,7 +192,7 @@ docker-compose up -d
 
 Change webhook URL in Asaas dashboard:
 - **Old**: `http://34.123.45.67:1337/api/payments/webhook`
-- **New**: `https://kaiyuutcg.com/api/payments/webhook`
+- **New**: `https://kaiyruutcg.com/api/payments/webhook`
 
 ---
 
@@ -200,14 +200,14 @@ Change webhook URL in Asaas dashboard:
 
 ### **Phase 1: Start Simple (Today)**
 ```bash
-# 1. Buy domain (kaiyuutcg.com)
+# 1. Buy domain (kaiyruutcg.com)
 # 2. Point A records to your GCP VM IP
 # 3. Deploy with domain
-./deploy-docker.sh kaiyuutcg.com your_asaas_api_key
+./deploy-docker.sh kaiyruutcg.com your_asaas_api_key
 docker-compose up -d
 ```
 
-**Result**: `http://kaiyuutcg.com:3000`
+**Result**: `http://kaiyruutcg.com:3000`
 
 ### **Phase 2: Add Cloudflare (This Week)**  
 1. Add domain to Cloudflare
@@ -215,7 +215,7 @@ docker-compose up -d
 3. Enable SSL
 4. Update webhook URL
 
-**Result**: `https://kaiyuutcg.com` (clean, fast, secure)
+**Result**: `https://kaiyruutcg.com` (clean, fast, secure)
 
 ---
 

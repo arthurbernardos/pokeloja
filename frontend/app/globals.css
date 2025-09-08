@@ -16,28 +16,57 @@
   }
 }
 
+/* Light mode background */
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: #f8f9fa;
+  background-image: url('/images/Fundo_Claro.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+
+/* Dark mode background */
+.dark body {
+  color: #ffffff;
+  background-color: #1a1a1a;
+  background-image: url('/images/Fundo_Escuro.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 /* Fix form input colors */
 input, select, textarea {
   color: #374151 !important; /* gray-700 */
+  background-color: white;
+}
+
+.dark input, .dark select, .dark textarea {
+  color: #e5e7eb !important; /* gray-200 */
+  background-color: #374151 !important; /* gray-700 */
+  border-color: #4b5563 !important; /* gray-600 */
 }
 
 input::placeholder, textarea::placeholder {
   color: #9CA3AF !important; /* gray-400 */
 }
 
+.dark input::placeholder, .dark textarea::placeholder {
+  color: #9ca3af !important; /* gray-400 */
+}
+
 /* Ensure focus states maintain proper text color */
 input:focus, select:focus, textarea:focus {
   color: #374151 !important; /* gray-700 */
+}
+
+.dark input:focus, .dark select:focus, .dark textarea:focus {
+  color: #f3f4f6 !important; /* gray-100 */
+  border-color: #60a5fa !important; /* blue-400 */
 }
 
 /* Toast notification animation */

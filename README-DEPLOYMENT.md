@@ -1,4 +1,4 @@
-# 🚀 Kaiyuu TCG - Deployment Guide
+# 🚀 Kaiyruu TCG - Deployment Guide
 
 ## 📋 Quick Answers to Your Questions
 
@@ -134,15 +134,15 @@ sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Clone your repository
-git clone https://github.com/yourusername/kaiyuu-tcg.git
-cd kaiyuu-tcg
+git clone https://github.com/yourusername/kaiyruu-tcg.git
+cd kaiyruu-tcg
 
 # Deploy
 ./deploy-docker.sh YOUR_VM_EXTERNAL_IP your_asaas_api_key
 docker-compose up -d
 
 # Configure firewall
-gcloud compute firewall-rules create kaiyuu-ports --allow tcp:3000,tcp:1337
+gcloud compute firewall-rules create kaiyruu-ports --allow tcp:3000,tcp:1337
 ```
 
 ## 📊 Monitoring & Maintenance

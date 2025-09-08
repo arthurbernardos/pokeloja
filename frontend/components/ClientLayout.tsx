@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { CartProvider } from '../contexts/CartContext'
 import { AuthProvider } from '../contexts/AuthContext'
 import { AnalyticsProvider } from '../contexts/AnalyticsContext'
 import { NotificationProvider } from '../contexts/NotificationContext'
+import { ThemeProvider, useTheme } from '../contexts/ThemeContext'
 import Notifications from './Notifications'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
@@ -39,12 +41,20 @@ function Navigation() {
   }, [])
 
   const { user, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
 
   return (
-    <nav className="bg-pokemon-blue text-white p-4 shadow-lg sticky top-0 z-50">
+    <nav className="bg-pokemon-blue dark:bg-gray-900 text-white p-4 shadow-lg sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold hover:text-pokemon-yellow transition-colors">
-            Kaiyuu TCG
+          <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <Image 
+              src="/images/Selo_KAIRYUU.png" 
+              alt="Kairyuu TCG Logo" 
+              width={40} 
+              height={40}
+              className="rounded-full"
+            />
+            <span className="text-2xl font-bold text-white">Kairyuu TCG</span>
           </Link>
           <div className="flex items-center space-x-6">
             <Link href="/" className="hover:text-pokemon-yellow transition-colors">
@@ -105,31 +115,63 @@ function Navigation() {
                 </Link>
               </div>
             )}
+            
+            {/* Dark mode toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {theme === 'light' ? (
+                <span className="text-xl">🌙</span>
+              ) : (
+                <span className="text-xl">☀️</span>
+              )}
+            </button>
           </div>
         </div>
       </nav>
   )
 }
 
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Navigation />
+      <main className="min-h-screen">
+        {children}
+      </main>
+      <footer className="bg-gray-800 dark:bg-gray-900 text-white p-8 mt-12">
+        <div className="container mx-auto">
+          <div className="flex flex-col items-center gap-4">
+            <Image 
+              src="/images/Selo_KAIRYUU.png" 
+              alt="Kairyuu TCG Logo" 
+              width={60} 
+              height={60}
+              className="rounded-full opacity-80"
+            />
+            <p className="text-center">&copy; 2024 Kairyuu TCG - A melhor loja de cartas Pokémon</p>
+          </div>
+        </div>
+      </footer>
+      <Notifications />
+    </>
+  )
+}
+
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <AnalyticsProvider>
-        <NotificationProvider>
-          <CartProvider>
-            <Navigation />
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <footer className="bg-gray-800 text-white p-8 mt-12">
-              <div className="container mx-auto text-center">
-                <p>&copy; 2024 Kaiyuu TCG - Loja de Cartas Pokémon</p>
-              </div>
-            </footer>
-            <Notifications />
-          </CartProvider>
-        </NotificationProvider>
-      </AnalyticsProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AnalyticsProvider>
+          <NotificationProvider>
+            <CartProvider>
+              <LayoutContent>{children}</LayoutContent>
+            </CartProvider>
+          </NotificationProvider>
+        </AnalyticsProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

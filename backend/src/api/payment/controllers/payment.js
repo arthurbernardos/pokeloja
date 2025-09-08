@@ -44,7 +44,7 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
       // Create PIX payment
       const paymentData = {
         value: order.valor_total,
-        description: `Pedido #${order.numero_pedido} - Kaiyuu TCG`,
+        description: `Pedido #${order.numero_pedido} - Kaiyruu TCG`,
         externalReference: `order_${order.id}`,
         discountValue: 0
       };
@@ -136,7 +136,7 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
       // Create credit card payment
       const paymentData = {
         value: order.valor_total,
-        description: `Pedido #${order.numero_pedido} - Kaiyuu TCG`,
+        description: `Pedido #${order.numero_pedido} - Kaiyruu TCG`,
         externalReference: `order_${order.id}`,
         installmentCount: cardData.installmentCount || 1
       };
@@ -231,7 +231,7 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
       // Create boleto payment
       const paymentData = {
         value: order.valor_total,
-        description: `Pedido #${order.numero_pedido} - Kaiyuu TCG`,
+        description: `Pedido #${order.numero_pedido} - Kaiyruu TCG`,
         externalReference: `order_${order.id}`,
         discountValue: 0
       };

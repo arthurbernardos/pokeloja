@@ -1,4 +1,4 @@
-# 🧪 Kaiyuu TCG - Testing Guide
+# 🧪 Kaiyruu TCG - Testing Guide
 
 ## 🏠 Localhost Testing
 
@@ -83,22 +83,22 @@ sudo npm install -g pm2
 ./deploy.sh YOUR_GCP_VM_IP
 
 # Copy files to VM (replace with your actual IP)
-scp -r . username@YOUR_GCP_VM_IP:~/kaiyuu-tcg/
+scp -r . username@YOUR_GCP_VM_IP:~/kaiyruu-tcg/
 
 # SSH into VM
 ssh username@YOUR_GCP_VM_IP
 
 # Setup and start
-cd kaiyuu-tcg
-cd backend && npm install && pm2 start "npm run develop" --name "kaiyuu-backend"
-cd ../frontend && npm install && npm run build && pm2 start "npm start" --name "kaiyuu-frontend"
+cd kaiyruu-tcg
+cd backend && npm install && pm2 start "npm run develop" --name "kaiyruu-backend"
+cd ../frontend && npm install && npm run build && pm2 start "npm start" --name "kaiyruu-frontend"
 ```
 
 ### 3. Configure Firewall
 ```bash
 # Allow ports 1337 and 3000
-gcloud compute firewall-rules create kaiyuu-backend --allow tcp:1337
-gcloud compute firewall-rules create kaiyuu-frontend --allow tcp:3000
+gcloud compute firewall-rules create kaiyruu-backend --allow tcp:1337
+gcloud compute firewall-rules create kaiyruu-frontend --allow tcp:3000
 ```
 
 **Access Your Deployed Site:**
@@ -179,10 +179,10 @@ curl -H "access_token: YOUR_API_KEY" https://sandbox.asaas.com/api/v3/customers
 ### Check Logs
 ```bash
 # Backend logs
-pm2 logs kaiyuu-backend
+pm2 logs kaiyruu-backend
 
 # Frontend logs  
-pm2 logs kaiyuu-frontend
+pm2 logs kaiyruu-frontend
 
 # All logs
 pm2 logs

@@ -2,7 +2,7 @@
   "name": "pokeloja-backend",
   "private": true,
   "version": "0.1.0",
-  "description": "Kaiyuu TCG loja backend with Strapi",
+  "description": "Kaiyruu TCG loja backend with Strapi",
   "scripts": {
     "build": "strapi build",
     "develop": "strapi develop",
@@ -23,7 +23,7 @@
     "styled-components": "^5.2.1"
   },
   "author": {
-    "name": "Kaiyuu TCG Team"
+    "name": "Kaiyruu TCG Team"
   },
   "strapi": {
     "uuid": "pokeloja-uuid-123-456-789"

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Kaiyuu TCG Docker Deployment Script
+# Kaiyruu TCG Docker Deployment Script
 # Usage: ./deploy-docker.sh [DOMAIN_OR_IP] [ASAAS_API_KEY] [ENVIRONMENT]
 
 DOMAIN_OR_IP=$1
 ASAAS_API_KEY=$2
 ENVIRONMENT=${3:-production}
 
-echo "🐳 Deploying Kaiyuu TCG with Docker"
+echo "🐳 Deploying Kaiyruu TCG with Docker"
 
 if [ -z "$DOMAIN_OR_IP" ]; then
     echo "📍 Setting up for localhost testing..."
@@ -28,28 +28,28 @@ EOF
     echo "🌐 Access: http://localhost:3000"
     echo "⚙️  Admin: http://localhost:1337/admin"
 else
-    # Detect if it's kaiyuutcg.com.br (production)
-    if [[ $DOMAIN_OR_IP == "kaiyuutcg.com.br" ]]; then
+    # Detect if it's kaiyruutcg.com.br (production)
+    if [[ $DOMAIN_OR_IP == "kaiyruutcg.com.br" ]]; then
         echo "🌐 Setting up for PRODUCTION: $DOMAIN_OR_IP"
         
         cat > .env << EOF
 NODE_ENV=production
 ASAAS_API_KEY=$ASAAS_API_KEY
-PUBLIC_URL=https://api.kaiyuutcg.com.br
-FRONTEND_URL=https://kaiyuutcg.com.br
+PUBLIC_URL=https://api.kaiyruutcg.com.br
+FRONTEND_URL=https://kaiyruutcg.com.br
 EOF
         
         cat > frontend/.env.local << EOF
-NEXT_PUBLIC_STRAPI_API_URL=https://api.kaiyuutcg.com.br/api
-NEXT_PUBLIC_STRAPI_UPLOADS_URL=https://api.kaiyuutcg.com.br
+NEXT_PUBLIC_STRAPI_API_URL=https://api.kaiyruutcg.com.br/api
+NEXT_PUBLIC_STRAPI_UPLOADS_URL=https://api.kaiyruutcg.com.br
 EOF
         
-        echo "✅ Production configuration created for kaiyuutcg.com.br"
+        echo "✅ Production configuration created for kaiyruutcg.com.br"
         echo "🚀 Run: docker-compose -f docker-compose.prod.yml up -d"
-        echo "🌐 Store: https://kaiyuutcg.com.br"
-        echo "⚙️  Admin: https://api.kaiyuutcg.com.br/admin"
-        echo "📡 API: https://api.kaiyuutcg.com.br/api"
-        echo "🪝 Webhook: https://api.kaiyuutcg.com.br/api/payments/webhook"
+        echo "🌐 Store: https://kaiyruutcg.com.br"
+        echo "⚙️  Admin: https://api.kaiyruutcg.com.br/admin"
+        echo "📡 API: https://api.kaiyruutcg.com.br/api"
+        echo "🪝 Webhook: https://api.kaiyruutcg.com.br/api/payments/webhook"
         
     # Detect if it's an IP address (testing)
     elif [[ $DOMAIN_OR_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -74,7 +74,7 @@ EOF
         echo "🪝 Webhook: http://$DOMAIN_OR_IP:1337/api/payments/webhook"
     else
         echo "❌ Unknown domain format: $DOMAIN_OR_IP"
-        echo "💡 Use: kaiyuutcg.com.br (production) or IP address (testing)"
+        echo "💡 Use: kaiyruutcg.com.br (production) or IP address (testing)"
         exit 1
     fi
 fi

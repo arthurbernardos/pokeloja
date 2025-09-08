@@ -31,7 +31,7 @@ export FRONTEND_URL="http://$CURRENT_IP"
 
 # Update Next.js config with current IP
 echo "⚙️  Updating Next.js configuration..."
-sed -i "s/domains: \[.*\]/domains: ['localhost', 'pokeloja-backend', 'api.kaiyuutcg.com.br', '$CURRENT_IP']/" frontend/next.config.js
+sed -i "s/domains: \[.*\]/domains: ['localhost', 'pokeloja-backend', 'api.kaiyruutcg.com.br', '$CURRENT_IP']/" frontend/next.config.js
 
 # Create temporary sed script for remote patterns
 cat > /tmp/update_patterns.sed << EOF
@@ -59,7 +59,7 @@ cat > /tmp/new_patterns.txt << EOF
       },
       {
         protocol: 'https',
-        hostname: 'api.kaiyuutcg.com.br',
+        hostname: 'api.kaiyruutcg.com.br',
       },
     ],
 EOF
@@ -84,7 +84,7 @@ if docker compose ps | grep -q "Up"; then
     echo "   Admin:    http://$CURRENT_IP/admin"
     echo "   API:      http://$CURRENT_IP/api"
     echo ""
-    echo "🔗 When domain is ready: https://kaiyuutcg.com.br"
+    echo "🔗 When domain is ready: https://kaiyruutcg.com.br"
 else
     echo "❌ Some services failed to start. Check logs with: docker compose logs"
     exit 1

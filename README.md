@@ -1,4 +1,4 @@
-# Kaiyuu TCG - Loja de Cartas Pokémon
+# Kaiyruu TCG - Loja de Cartas Pokémon
 
 ## Descrição
 

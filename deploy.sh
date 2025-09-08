@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Kaiyuu TCG Deployment Script for GCP VM
+# Kaiyruu TCG Deployment Script for GCP VM
 # Usage: ./deploy.sh [VM_IP] [optional: production]
 
 VM_IP=$1
@@ -12,7 +12,7 @@ if [ -z "$VM_IP" ]; then
     exit 1
 fi
 
-echo "🚀 Deploying Kaiyuu TCG to GCP VM: $VM_IP"
+echo "🚀 Deploying Kaiyruu TCG to GCP VM: $VM_IP"
 
 # Update frontend environment
 echo "📝 Updating frontend configuration..."
