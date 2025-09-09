@@ -1,16 +1,5 @@
 'use strict';
 
-module.exports = {
-  routes: [
-    {
-      method: 'POST',
-      path: '/custom-orders',
-      handler: 'custom-order.create',
-      config: {
-        policies: [],
-        middlewares: [],
-        auth: false, // Allow anonymous custom orders
-      },
-    }
-  ],
-};
+const { createCoreRouter } = require('@strapi/strapi').factories;
+
+module.exports = createCoreRouter('api::custom-order.custom-order');

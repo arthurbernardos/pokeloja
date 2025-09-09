@@ -1,8 +1,9 @@
 'use strict';
 
+const { createCoreController } = require('@strapi/strapi').factories;
 const emailService = require('../../../services/email');
 
-module.exports = {
+module.exports = createCoreController('api::custom-order.custom-order', ({ strapi }) => ({
   async create(ctx) {
     try {
       const { body } = ctx.request;
@@ -53,9 +54,18 @@ Observações: ${body.observacoes || 'Nenhuma'}
         console.error('Failed to send customer confirmation:', emailError);
       }
 
+      // Save to database
+      const customOrder = await strapi.entityService.create('api::custom-order.custom-order', {
+        data: {
+          ...body,
+          status: 'pendente'
+        }
+      });
+
       return ctx.send({
         success: true,
-        message: 'Pedido personalizado enviado com sucesso! Entraremos em contato em breve.'
+        message: 'Pedido personalizado enviado com sucesso! Entraremos em contato em breve.',
+        data: customOrder
       });
 
     } catch (error) {
@@ -63,4 +73,4 @@ Observações: ${body.observacoes || 'Nenhuma'}
       return ctx.internalServerError('Erro ao processar pedido personalizado');
     }
   }
-};
+}));
