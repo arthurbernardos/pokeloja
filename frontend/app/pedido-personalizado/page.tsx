@@ -23,8 +23,44 @@ export default function CustomOrderPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement form submission
-    alert('Pedido enviado! Entraremos em contato em breve.')
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/custom-orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        alert('Pedido personalizado enviado com sucesso! Entraremos em contato em breve.')
+        // Reset form
+        setFormData({
+          nome: '',
+          email: '',
+          telefone: '',
+          cardNome: '',
+          cardDescricao: '',
+          categoria: 'Pokémon Básico',
+          tipo: 'Fogo',
+          raridade: 'Comum',
+          condicao: 'Near Mint',
+          nacionalidade: 'Português',
+          lacrado: false,
+          setNome: '',
+          numeroCarta: '',
+          quantidade: 1,
+          observacoes: ''
+        })
+      } else {
+        throw new Error('Erro ao enviar pedido')
+      }
+    } catch (error) {
+      console.error('Erro:', error)
+      alert('Erro ao enviar pedido. Tente novamente.')
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {

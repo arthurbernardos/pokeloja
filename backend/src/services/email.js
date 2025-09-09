@@ -218,6 +218,53 @@ class EmailService {
     }
   }
 
+  async sendCustomOrderConfirmation(customerData) {
+    const mailOptions = {
+      from: this.fromEmail,
+      to: customerData.email,
+      subject: 'Pedido Personalizado Recebido - Kairyuu TCG',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: #9333EA; color: white; padding: 20px; text-align: center;">
+            <h1>Pedido Personalizado Recebido! 🎯</h1>
+          </div>
+          <div style="padding: 20px; background: #f8f9fa;">
+            <h2>Olá, ${customerData.nome}!</h2>
+            <p>Recebemos seu pedido personalizado e nossa equipe irá analisá-lo.</p>
+            
+            <h3>Resumo do seu pedido:</h3>
+            <div style="background: white; padding: 15px; border-radius: 5px;">
+              <p><strong>Carta:</strong> ${customerData.cardNome}</p>
+              <p><strong>Categoria:</strong> ${customerData.categoria}</p>
+              <p><strong>Raridade:</strong> ${customerData.raridade}</p>
+              <p><strong>Quantidade:</strong> ${customerData.quantidade}</p>
+            </div>
+            
+            <h3>Próximos passos:</h3>
+            <ul>
+              <li>✅ Verificaremos a disponibilidade da carta</li>
+              <li>📞 Entraremos em contato em até 24 horas</li>
+              <li>💰 Enviaremos orçamento e condições</li>
+              <li>🚚 Organizaremos a entrega</li>
+            </ul>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://kairyuutcg.com.br" style="background: #9333EA; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                Visitar Loja
+              </a>
+            </div>
+            
+            <p style="color: #666; font-size: 14px;">
+              Se você tiver dúvidas, responda este email ou entre em contato conosco.
+            </p>
+          </div>
+        </div>
+      `,
+    };
+
+    await this.sendEmail(mailOptions);
+  }
+
   async notifyAdminCustomOrder(customOrderData) {
     const mailOptions = {
       from: this.fromEmail,
