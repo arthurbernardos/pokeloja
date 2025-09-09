@@ -11,6 +11,16 @@ module.exports = {
         policies: [],
         middlewares: [],
       },
+    },
+    {
+      method: 'GET',
+      path: '/custom-orders',
+      handler: 'custom-orders.info',
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
     }
   ],
 };

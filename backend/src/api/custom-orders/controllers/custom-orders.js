@@ -3,6 +3,14 @@
 const emailService = require('../../../services/email');
 
 module.exports = {
+  async info(ctx) {
+    return ctx.send({
+      message: 'Custom Orders API',
+      methods: ['POST'],
+      description: 'Use POST to create a custom order with fields: nome, email, cardNome, etc.'
+    });
+  },
+
   async create(ctx) {
     try {
       const data = ctx.request.body;
