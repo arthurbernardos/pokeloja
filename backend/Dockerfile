@@ -16,6 +16,10 @@ RUN npm install --no-optional
 # Copiar código fonte
 COPY . .
 
+# Build admin panel with correct URL
+ENV STRAPI_ADMIN_BACKEND_URL=https://kairyuutcg.com.br
+RUN npm run build
+
 # Expor porta
 EXPOSE 1337
 
