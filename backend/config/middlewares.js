@@ -5,13 +5,16 @@ module.exports = [
   {
     name: 'strapi::cors',
     config: {
-      enabled: true,
       header: '*',
       origin: [
         'http://localhost:3000', 
         'http://frontend:3000',
         'http://localhost:1337',
-        'http://127.0.0.1:1337'
+        'http://127.0.0.1:1337',
+        'https://kairyuutcg.com.br',
+        'http://kairyuutcg.com.br',
+        'http://34.68.228.15',
+        'https://34.68.228.15'
       ]
     }
   },
