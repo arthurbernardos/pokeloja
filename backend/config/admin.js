@@ -10,6 +10,6 @@ module.exports = ({ env }) => ({
       salt: env('TRANSFER_TOKEN_SALT'),
     },
   },
-  url: env('ADMIN_URL', 'http://localhost:1337/admin'),
+  // url: env('ADMIN_URL', '/admin'), // Let Strapi handle the URL automatically
   serveAdminPanel: env.bool('SERVE_ADMIN', true),
 });
