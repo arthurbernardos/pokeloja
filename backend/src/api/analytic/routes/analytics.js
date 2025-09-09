@@ -7,6 +7,7 @@ module.exports = {
       path: '/analytics/popular-categories',
       handler: 'analytics.getPopularCategories',
       config: {
+        auth: false,
         policies: [],
         middlewares: [],
       },
@@ -16,6 +17,7 @@ module.exports = {
       path: '/analytics/track',
       handler: 'analytics.track',
       config: {
+        auth: false,
         policies: [],
         middlewares: [],
       },
