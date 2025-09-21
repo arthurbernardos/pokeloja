@@ -23,6 +23,8 @@ interface PokemonCard {
     categoria: string
     condicao: string
     slug: string
+    lacrado: boolean
+    nacionalidade: string
     imagem?: {
       data?: {
         attributes: {
