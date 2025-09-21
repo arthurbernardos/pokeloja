@@ -53,24 +53,41 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
         });
       }
 
-      // 3. CREATE ORDER WITH SERVER-CALCULATED TOTAL
-      // Don't link to customer for now since user != customer record
+      // 3. FIND OR CREATE CUSTOMER RECORD
+      let customer = await strapi.db.query('api::customer.customer').findOne({
+        where: { email: ctx.state.user.email },
+      });
+
+      if (!customer) {
+        // Create customer record from user data
+        customer = await strapi.entityService.create('api::customer.customer', {
+          data: {
+            nome: ctx.state.user.nome || ctx.state.user.email,
+            email: ctx.state.user.email,
+            telefone: ctx.state.user.telefone || '',
+            // Leave other fields empty for now - user can fill them later
+          }
+        });
+        console.log(`Created customer record for user: ${ctx.state.user.email}`);
+      }
+
+      // 4. CREATE ORDER WITH SERVER-CALCULATED TOTAL
       const order = await strapi.entityService.create('api::order.order', {
         data: {
           numero_pedido: numero_pedido || `ORD${Date.now()}`,
           data_pedido: new Date(),
-          // customer: null, // Don't link to customer for now
+          customer: customer.id, // Link to customer record
           itens: validatedItems, // Store validated items with real prices
           valor_total: calculatedTotal, // SERVER calculated total, not frontend!
           valor_frete: 0, // Free shipping for now
           status: 'Pendente',
           forma_pagamento: forma_pagamento || 'PIX',
           endereco_entrega: '', // TODO: Add address later
-          observacoes: `User ID: ${ctx.state.user.id}` // Store user ID in notes for reference
+          observacoes: ''
         }
       });
 
-      // 4. UPDATE POKEMON CARD STOCK
+      // 5. UPDATE POKEMON CARD STOCK
       for (const item of validatedItems) {
         await strapi.db.query('api::pokemon-card.pokemon-card').update({
           where: { id: item.card_id },
