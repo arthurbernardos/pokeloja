@@ -72,43 +72,39 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
         console.log(`Created customer record for user: ${ctx.state.user.email}`);
       }
 
-      // 4. CREATE ORDER WITH SERVER-CALCULATED TOTAL (use transaction for data integrity)
-      const order = await strapi.db.transaction(async (trx) => {
-        // Create the order
-        const newOrder = await strapi.entityService.create('api::order.order', {
-          data: {
-            numero_pedido: `ORD${Date.now()}`,
-            data_pedido: new Date(),
-            customer: customer.id,
-            itens: validatedItems,
-            valor_total: calculatedTotal,
-            valor_frete: 0,
-            status: 'Pendente',
-            forma_pagamento: forma_pagamento || 'PIX',
-            endereco_entrega: '',
-            observacoes: ''
-          }
-        });
-
-        // Update stock for each item atomically
-        for (const item of validatedItems) {
-          await strapi.db.query('api::pokemon-card.pokemon-card').update({
-            where: { id: item.card_id },
-            data: {
-              quantidade_estoque: {
-                $raw: `quantidade_estoque - ${item.quantity}`
-              },
-              em_estoque: {
-                $raw: `CASE WHEN quantidade_estoque - ${item.quantity} > 0 THEN true ELSE false END`
-              }
-            }
-          });
+      // 4. CREATE ORDER WITH SERVER-CALCULATED TOTAL
+      const order = await strapi.entityService.create('api::order.order', {
+        data: {
+          numero_pedido: `ORD${Date.now()}`,
+          data_pedido: new Date(),
+          customer: customer.id,
+          itens: validatedItems,
+          valor_total: calculatedTotal,
+          valor_frete: 0,
+          status: 'Pendente',
+          forma_pagamento: forma_pagamento || 'PIX',
+          endereco_entrega: '',
+          observacoes: ''
         }
-
-        return newOrder;
       });
 
-      // Stock was already updated in the transaction above
+      // 5. UPDATE POKEMON CARD STOCK
+      for (const item of validatedItems) {
+        const currentCard = await strapi.db.query('api::pokemon-card.pokemon-card').findOne({
+          where: { id: item.card_id }
+        });
+
+        const newStock = currentCard.quantidade_estoque - item.quantity;
+
+        await strapi.db.query('api::pokemon-card.pokemon-card').update({
+          where: { id: item.card_id },
+          data: {
+            quantidade_estoque: newStock,
+            em_estoque: newStock > 0
+          }
+        });
+      }
+
 
       console.log(`Novo pedido criado: ${order.numero_pedido} - Total: R$ ${calculatedTotal}`);
 
