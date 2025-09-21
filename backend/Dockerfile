@@ -17,7 +17,7 @@ RUN npm install --no-optional
 COPY . .
 
 # Build admin panel with correct URL
-ENV STRAPI_ADMIN_BACKEND_URL=https://api.kaiyuutcg.com.br
+ENV STRAPI_ADMIN_BACKEND_URL=https://api.kairyuutcg.com.br
 RUN npm run build
 
 # Expor porta
