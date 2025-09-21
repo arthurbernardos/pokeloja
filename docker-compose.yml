@@ -53,14 +53,11 @@ services:
     ports:
       - "1337:1337"
     volumes:
-      - ./backend:/app
-      - /app/node_modules
       - strapi_uploads:/app/public/uploads
     depends_on:
       - db
     networks:
       - pokeloja-network
-    command: npm run start
 
   # Frontend Next.js
   frontend:
@@ -74,15 +71,10 @@ services:
       NEXT_PUBLIC_STRAPI_UPLOADS_URL: ""
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     depends_on:
       - backend
     networks:
       - pokeloja-network
-    command: npm run start
 
   # Nginx Reverse Proxy
   nginx:

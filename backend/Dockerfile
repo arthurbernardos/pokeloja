@@ -18,6 +18,7 @@ COPY . .
 
 # Build admin panel with correct URL
 ENV STRAPI_ADMIN_BACKEND_URL=https://api.kairyuutcg.com.br
+ENV NODE_ENV=production
 RUN npm run build
 
 # Expor porta
