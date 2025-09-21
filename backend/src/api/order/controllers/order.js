@@ -54,18 +54,19 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
       }
 
       // 3. CREATE ORDER WITH SERVER-CALCULATED TOTAL
+      // Don't link to customer for now since user != customer record
       const order = await strapi.entityService.create('api::order.order', {
         data: {
           numero_pedido: numero_pedido || `ORD${Date.now()}`,
           data_pedido: new Date(),
-          customer: ctx.state.user.id, // Use authenticated user ID
+          // customer: null, // Don't link to customer for now
           itens: validatedItems, // Store validated items with real prices
           valor_total: calculatedTotal, // SERVER calculated total, not frontend!
           valor_frete: 0, // Free shipping for now
           status: 'Pendente',
           forma_pagamento: forma_pagamento || 'PIX',
           endereco_entrega: '', // TODO: Add address later
-          observacoes: ''
+          observacoes: `User ID: ${ctx.state.user.id}` // Store user ID in notes for reference
         }
       });
 
