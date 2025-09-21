@@ -40,9 +40,9 @@ services:
       # Asaas Payment Gateway - Add your API key here
       ASAAS_API_KEY: ${ASAAS_API_KEY:-aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwMDAwMDA6OiRhYXNfMGU5MzE4YmEtNDY0Yy00NGY0LWFlYzQtOWNkZGE4NzY0YTE3}
       # URLs for webhook configuration
-      PUBLIC_URL: ${PUBLIC_URL:-https://kairyuutcg.com.br}
-      STRAPI_ADMIN_BACKEND_URL: https://kairyuutcg.com.br
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      PUBLIC_URL: ${PUBLIC_URL:-https://api.kairyuutcg.com.br}
+      STRAPI_ADMIN_BACKEND_URL: ${PUBLIC_URL:-https://api.kairyuutcg.com.br}
+      FRONTEND_URL: ${FRONTEND_URL:-https://kairyuutcg.com.br}
       # Email configuration
       SMTP_HOST: ${SMTP_HOST:-smtp.resend.com}
       SMTP_PORT: ${SMTP_PORT:-587}
