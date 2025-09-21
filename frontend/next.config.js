@@ -4,7 +4,6 @@ const nextConfig = {
   output: 'standalone',
   
   images: {
-    domains: ['localhost', 'pokeloja-backend', 'api.kairyuutcg.com.br', '35.223.253.42'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -15,6 +14,10 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'backend',
         port: '1337',
+      },
+      {
+        protocol: 'http',
+        hostname: 'pokeloja-backend',
       },
       {
         protocol: 'http',
