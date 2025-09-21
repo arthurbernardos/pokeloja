@@ -7,6 +7,7 @@ interface User {
   nome: string
   email: string
   telefone?: string
+  createdAt?: string
 }
 
 interface AuthContextType {
