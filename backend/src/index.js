@@ -58,11 +58,16 @@ module.exports = {
         { action: 'api::order.order.findOne', roles: ['authenticated'] },
         { action: 'api::order.order.create', roles: ['public', 'authenticated'] },
         { action: 'api::order.order.update', roles: [] }, // Nobody can update via API
-        // Payment permissions (webhook only)
+        // Payment permissions - custom routes use different permission system
         { action: 'api::payment.payment.find', roles: ['authenticated'] },
         { action: 'api::payment.payment.findOne', roles: ['authenticated'] },
         { action: 'api::payment.payment.create', roles: [] }, // Only webhook
         { action: 'api::payment.payment.update', roles: [] }, // Only webhook
+        // Custom payment route permissions
+        { action: 'api::payment.payment.createPixPayment', roles: ['authenticated'] },
+        { action: 'api::payment.payment.createCreditCardPayment', roles: ['authenticated'] },
+        { action: 'api::payment.payment.createBoletoPayment', roles: ['authenticated'] },
+        { action: 'api::payment.payment.getPaymentStatus', roles: ['public', 'authenticated'] }
       ];
       
       // Process each permission
