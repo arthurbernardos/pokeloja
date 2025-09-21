@@ -38,7 +38,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 
         // Check stock
         if (!card.em_estoque || card.quantidade_estoque < item.quantity) {
-          return ctx.badRequest(`Carta ${card.nome} tem apenas ${card.quantidade_estoque} unidades em estoque`);
+          return ctx.badRequest(`Carta ${card.nome} tem apenas ${card.quantidade_estoque || 0} unidades em estoque`);
         }
 
         // Calculate using DATABASE price, not frontend price!
