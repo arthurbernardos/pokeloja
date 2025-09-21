@@ -21,74 +21,97 @@ module.exports = {
     console.log('🚀 Starting bootstrap process...');
     
     try {
-      // Get public role
+      // Get both roles
       const publicRole = await strapi.db.query('plugin::users-permissions.role').findOne({
         where: { type: 'public' },
       });
       
-      if (!publicRole) {
-        console.error('❌ Public role not found!');
+      const authenticatedRole = await strapi.db.query('plugin::users-permissions.role').findOne({
+        where: { type: 'authenticated' },
+      });
+      
+      if (!publicRole || !authenticatedRole) {
+        console.error('❌ Roles not found!');
         return;
       }
       
-      console.log('✅ Found public role:', publicRole.id);
+      console.log('✅ Found roles - Public:', publicRole.id, 'Authenticated:', authenticatedRole.id);
       
       // Define all required permissions
       const requiredPermissions = [
-        // Pokemon card public permissions
-        { action: 'api::pokemon-card.pokemon-card.find', public: true },
-        { action: 'api::pokemon-card.pokemon-card.findOne', public: true },
-        { action: 'api::pokemon-card.pokemon-card.stats', public: true },
-        { action: 'api::pokemon-card.pokemon-card.search', public: true },
-        { action: 'api::pokemon-card.pokemon-card.featured', public: true },
-        // Analytics public permissions
-        { action: 'api::analytic.analytic.find', public: true },
-        { action: 'api::analytic.analytic.create', public: true },
-        // Customer permissions (public can create for checkout)
-        { action: 'api::customer.customer.find', public: true },
-        { action: 'api::customer.customer.findOne', public: false },
-        { action: 'api::customer.customer.create', public: true },
-        { action: 'api::customer.customer.update', public: false },
-        // Order permissions (public can create for checkout)
-        { action: 'api::order.order.find', public: false },
-        { action: 'api::order.order.findOne', public: false },
-        { action: 'api::order.order.create', public: true },
-        { action: 'api::order.order.update', public: false },
-        // Payment permissions (handled by webhook, not public)
-        { action: 'api::payment.payment.find', public: false },
-        { action: 'api::payment.payment.findOne', public: false },
-        { action: 'api::payment.payment.create', public: false },
-        { action: 'api::payment.payment.update', public: false },
+        // Pokemon card permissions
+        { action: 'api::pokemon-card.pokemon-card.find', roles: ['public', 'authenticated'] },
+        { action: 'api::pokemon-card.pokemon-card.findOne', roles: ['public', 'authenticated'] },
+        { action: 'api::pokemon-card.pokemon-card.stats', roles: ['public', 'authenticated'] },
+        { action: 'api::pokemon-card.pokemon-card.search', roles: ['public', 'authenticated'] },
+        { action: 'api::pokemon-card.pokemon-card.featured', roles: ['public', 'authenticated'] },
+        // Analytics permissions
+        { action: 'api::analytic.analytic.find', roles: ['public', 'authenticated'] },
+        { action: 'api::analytic.analytic.create', roles: ['public', 'authenticated'] },
+        // Customer permissions
+        { action: 'api::customer.customer.find', roles: ['public', 'authenticated'] },
+        { action: 'api::customer.customer.findOne', roles: ['authenticated'] },
+        { action: 'api::customer.customer.create', roles: ['public', 'authenticated'] },
+        { action: 'api::customer.customer.update', roles: ['authenticated'] },
+        // Order permissions - BOTH public and authenticated can create
+        { action: 'api::order.order.find', roles: ['authenticated'] },
+        { action: 'api::order.order.findOne', roles: ['authenticated'] },
+        { action: 'api::order.order.create', roles: ['public', 'authenticated'] },
+        { action: 'api::order.order.update', roles: [] }, // Nobody can update via API
+        // Payment permissions (webhook only)
+        { action: 'api::payment.payment.find', roles: ['authenticated'] },
+        { action: 'api::payment.payment.findOne', roles: ['authenticated'] },
+        { action: 'api::payment.payment.create', roles: [] }, // Only webhook
+        { action: 'api::payment.payment.update', roles: [] }, // Only webhook
       ];
       
-      // Check and create permissions
-      for (const { action, public: isPublic } of requiredPermissions) {
+      // Process each permission
+      for (const { action, roles } of requiredPermissions) {
         try {
-          // Check if permission exists
-          const existingPermission = await strapi.db.query('plugin::users-permissions.permission').findOne({
+          // Get or create the permission
+          let permission = await strapi.db.query('plugin::users-permissions.permission').findOne({
             where: { action },
           });
           
-          if (!existingPermission) {
-            // Create permission
-            await strapi.db.query('plugin::users-permissions.permission').create({
+          if (!permission) {
+            // Create base permission
+            permission = await strapi.db.query('plugin::users-permissions.permission').create({
               data: {
                 action,
-                enabled: isPublic,
-                role: isPublic ? publicRole.id : null,
+                enabled: true,
               },
             });
             console.log(`✅ Created permission: ${action}`);
-          } else if (isPublic && existingPermission.role !== publicRole.id) {
-            // Update permission to be public
-            await strapi.db.query('plugin::users-permissions.permission').update({
-              where: { id: existingPermission.id },
-              data: {
-                enabled: true,
-                role: publicRole.id,
-              },
-            });
-            console.log(`🔄 Updated permission: ${action}`);
+          }
+          
+          // Get current role links
+          const currentLinks = await strapi.db.query('plugin::users-permissions.permission').findOne({
+            where: { id: permission.id },
+            populate: ['role'],
+          });
+          
+          // Determine which roles should have this permission
+          const roleMap = {
+            'public': publicRole.id,
+            'authenticated': authenticatedRole.id
+          };
+          
+          // Remove existing links
+          await strapi.db.connection.raw(
+            'DELETE FROM up_permissions_role_links WHERE permission_id = ?',
+            [permission.id]
+          );
+          
+          // Add new links for specified roles
+          for (const roleName of roles) {
+            const roleId = roleMap[roleName];
+            if (roleId) {
+              await strapi.db.connection.raw(
+                'INSERT INTO up_permissions_role_links (permission_id, role_id) VALUES (?, ?) ON CONFLICT DO NOTHING',
+                [permission.id, roleId]
+              );
+              console.log(`🔗 Linked ${action} to ${roleName} role`);
+            }
           }
         } catch (error) {
           console.error(`❌ Error handling permission ${action}:`, error.message);
