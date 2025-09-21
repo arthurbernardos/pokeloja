@@ -23,8 +23,8 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
         return ctx.badRequest('Pedido não encontrado');
       }
 
-      // Verify order belongs to authenticated user
-      if (order.customer.id !== ctx.state.user.id) {
+      // Verify order belongs to authenticated user (compare by email)
+      if (order.customer.email !== ctx.state.user.email) {
         return ctx.forbidden('Este pedido não pertence a você');
       }
 
@@ -122,8 +122,8 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
         return ctx.badRequest('Pedido não encontrado');
       }
 
-      // Verify order belongs to authenticated user
-      if (order.customer.id !== ctx.state.user.id) {
+      // Verify order belongs to authenticated user (compare by email)
+      if (order.customer.email !== ctx.state.user.email) {
         return ctx.forbidden('Este pedido não pertence a você');
       }
 
@@ -234,8 +234,8 @@ module.exports = createCoreController('api::payment.payment', ({ strapi }) => ({
         return ctx.badRequest('Pedido não encontrado');
       }
 
-      // Verify order belongs to authenticated user
-      if (order.customer.id !== ctx.state.user.id) {
+      // Verify order belongs to authenticated user (compare by email)
+      if (order.customer.email !== ctx.state.user.email) {
         return ctx.forbidden('Este pedido não pertence a você');
       }
 
