@@ -9,7 +9,7 @@ module.exports = ({ env }) => {
     proxy: {
       enabled: true,
       ssl: true, // Force SSL when behind proxy
-      host: 'kairyuutcg.com.br',
+      host: 'api.kairyuutcg.com.br',
       port: 443,
     },
     app: {
