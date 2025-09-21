@@ -7,10 +7,13 @@ module.exports = [
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          'connect-src': ["'self'", 'https:', 'http:', 'https://kairyuutcg.com.br', 'http://kairyuutcg.com.br'],
-          'img-src': ["'self'", 'data:', 'blob:', 'https://market-assets.strapi.io'],
+          'connect-src': ["'self'", 'https:', 'http:', 'https://kairyuutcg.com.br', 'http://kairyuutcg.com.br', 'https://api.kairyuutcg.com.br', 'https://analytics.strapi.io'],
+          'img-src': ["'self'", 'data:', 'blob:', 'https://market-assets.strapi.io', 'https://strapi.io'],
           'media-src': ["'self'", 'data:', 'blob:'],
           'frame-src': ["'self'"],
+          'script-src': ["'self'", "'unsafe-inline'"],
+          'style-src': ["'self'", "'unsafe-inline'"],
+          'font-src': ["'self'", 'data:'],
         },
       },
     },
@@ -26,6 +29,8 @@ module.exports = [
         'http://127.0.0.1:1337',
         'https://kairyuutcg.com.br',
         'http://kairyuutcg.com.br',
+        'https://api.kairyuutcg.com.br',
+        'http://api.kairyuutcg.com.br',
         'http://34.68.228.15',
         'https://34.68.228.15'
       ]
