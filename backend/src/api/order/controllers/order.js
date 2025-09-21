@@ -15,7 +15,8 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
       }
       
       const data = ctx.request.body.data || ctx.request.body;
-      const { numero_pedido, data_pedido, status, valor_total, valor_frete, forma_pagamento, itens } = data;
+      const { forma_pagamento, itens } = data;
+      // Note: We ignore numero_pedido, valor_total, etc. from frontend for security
 
       if (!itens || itens.length === 0) {
         return ctx.badRequest('Carrinho vazio');
@@ -71,45 +72,43 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
         console.log(`Created customer record for user: ${ctx.state.user.email}`);
       }
 
-      // 4. CREATE ORDER WITH SERVER-CALCULATED TOTAL
-      const order = await strapi.entityService.create('api::order.order', {
-        data: {
-          numero_pedido: numero_pedido || `ORD${Date.now()}`,
-          data_pedido: new Date(),
-          customer: customer.id, // Link to customer record
-          itens: validatedItems, // Store validated items with real prices
-          valor_total: calculatedTotal, // SERVER calculated total, not frontend!
-          valor_frete: 0, // Free shipping for now
-          status: 'Pendente',
-          forma_pagamento: forma_pagamento || 'PIX',
-          endereco_entrega: '', // TODO: Add address later
-          observacoes: ''
-        }
-      });
-
-      // 5. UPDATE POKEMON CARD STOCK
-      for (const item of validatedItems) {
-        await strapi.db.query('api::pokemon-card.pokemon-card').update({
-          where: { id: item.card_id },
+      // 4. CREATE ORDER WITH SERVER-CALCULATED TOTAL (use transaction for data integrity)
+      const order = await strapi.db.transaction(async (trx) => {
+        // Create the order
+        const newOrder = await strapi.entityService.create('api::order.order', {
           data: {
-            quantidade_estoque: {
-              $raw: `quantidade_estoque - ${item.quantity}`
-            }
+            numero_pedido: `ORD${Date.now()}`,
+            data_pedido: new Date(),
+            customer: customer.id,
+            itens: validatedItems,
+            valor_total: calculatedTotal,
+            valor_frete: 0,
+            status: 'Pendente',
+            forma_pagamento: forma_pagamento || 'PIX',
+            endereco_entrega: '',
+            observacoes: ''
           }
         });
-        
-        // Update em_estoque flag
-        const updatedCard = await strapi.db.query('api::pokemon-card.pokemon-card').findOne({
-          where: { id: item.card_id }
-        });
-        
-        if (updatedCard.quantidade_estoque <= 0) {
+
+        // Update stock for each item atomically
+        for (const item of validatedItems) {
           await strapi.db.query('api::pokemon-card.pokemon-card').update({
             where: { id: item.card_id },
-            data: { em_estoque: false }
+            data: {
+              quantidade_estoque: {
+                $raw: `quantidade_estoque - ${item.quantity}`
+              },
+              em_estoque: {
+                $raw: `CASE WHEN quantidade_estoque - ${item.quantity} > 0 THEN true ELSE false END`
+              }
+            }
           });
         }
-      }
+
+        return newOrder;
+      });
+
+      // Stock was already updated in the transaction above
 
       console.log(`Novo pedido criado: ${order.numero_pedido} - Total: R$ ${calculatedTotal}`);
 
@@ -127,6 +126,52 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
     }
   },
 
-  // For now, let the default find and findOne work without authentication
-  // You can add authentication later when you implement user login
+  // Override find to only show user's own orders if authenticated
+  async find(ctx) {
+    if (ctx.state.user) {
+      // Find customer record for this user
+      const customer = await strapi.db.query('api::customer.customer').findOne({
+        where: { email: ctx.state.user.email },
+      });
+      
+      if (customer) {
+        // Filter orders by customer
+        ctx.query.filters = {
+          ...ctx.query.filters,
+          customer: customer.id
+        };
+      } else {
+        // No customer record = no orders
+        return { data: [], meta: { pagination: { total: 0 } } };
+      }
+    } else {
+      // Not authenticated = no access
+      return ctx.unauthorized('Login necessário');
+    }
+
+    return super.find(ctx);
+  },
+
+  // Override findOne to check ownership
+  async findOne(ctx) {
+    if (!ctx.state.user) {
+      return ctx.unauthorized('Login necessário');
+    }
+
+    const { id } = ctx.params;
+    const order = await strapi.entityService.findOne('api::order.order', id, {
+      populate: ['customer']
+    });
+
+    if (!order) {
+      return ctx.notFound('Pedido não encontrado');
+    }
+
+    // Check if order belongs to user
+    if (order.customer?.email !== ctx.state.user.email) {
+      return ctx.forbidden('Acesso negado');
+    }
+
+    return { data: order };
+  }
 }));
