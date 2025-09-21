@@ -22,23 +22,23 @@ services:
       dockerfile: Dockerfile
     container_name: pokeloja-backend
     environment:
-      NODE_ENV: development
+      NODE_ENV: ${NODE_ENV:-production}
       DATABASE_CLIENT: postgres
       DATABASE_HOST: db
       DATABASE_PORT: 5432
-      DATABASE_NAME: pokeloja
-      DATABASE_USERNAME: pokeloja_user
-      DATABASE_PASSWORD: pokeloja_password
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_SSL: false
-      JWT_SECRET: super-secret-jwt-key-for-development
-      ADMIN_JWT_SECRET: super-secret-admin-jwt-key-for-development
-      API_TOKEN_SALT: super-secret-api-token-salt-for-development
-      TRANSFER_TOKEN_SALT: super-secret-transfer-token-salt-for-development
-      APP_KEYS: app-key-1,app-key-2,app-key-3,app-key-4
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      APP_KEYS: ${APP_KEYS}
       HOST: 0.0.0.0
       PORT: 1337
       # Asaas Payment Gateway - Add your API key here
-      ASAAS_API_KEY: ${ASAAS_API_KEY:-aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwMDAwMDA6OiRhYXNfMGU5MzE4YmEtNDY0Yy00NGY0LWFlYzQtOWNkZGE4NzY0YTE3}
+      ASAAS_API_KEY: ${ASAAS_API_KEY}
       # URLs for webhook configuration
       PUBLIC_URL: ${PUBLIC_URL:-https://api.kairyuutcg.com.br}
       STRAPI_ADMIN_BACKEND_URL: ${PUBLIC_URL:-https://api.kairyuutcg.com.br}
@@ -60,7 +60,7 @@ services:
       - db
     networks:
       - pokeloja-network
-    command: npm run develop
+    command: npm run start
 
   # Frontend Next.js
   frontend:
@@ -69,7 +69,7 @@ services:
       dockerfile: Dockerfile
     container_name: pokeloja-frontend
     environment:
-      NODE_ENV: development
+      NODE_ENV: ${NODE_ENV:-production}
       NEXT_PUBLIC_STRAPI_API_URL: /api
       NEXT_PUBLIC_STRAPI_UPLOADS_URL: ""
     ports:
@@ -82,7 +82,7 @@ services:
       - backend
     networks:
       - pokeloja-network
-    command: npm run dev
+    command: npm run start
 
   # Nginx Reverse Proxy
   nginx:

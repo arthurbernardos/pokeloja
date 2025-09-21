@@ -17,11 +17,11 @@ RUN npm install --no-optional
 COPY . .
 
 # Build admin panel with correct URL
-ENV STRAPI_ADMIN_BACKEND_URL=https://kairyuutcg.com.br
+ENV STRAPI_ADMIN_BACKEND_URL=https://api.kaiyuutcg.com.br
 RUN npm run build
 
 # Expor porta
 EXPOSE 1337
 
-# Comando para desenvolvimento
-CMD ["npm", "run", "develop"]
+# Comando para produção
+CMD ["npm", "run", "start"]

@@ -12,8 +12,11 @@ RUN npm install
 # Copiar código fonte
 COPY . .
 
+# Build Next.js para produção
+RUN npm run build
+
 # Expor porta
 EXPOSE 3000
 
-# Comando para desenvolvimento
-CMD ["npm", "run", "dev"]
+# Comando para produção
+CMD ["npm", "run", "start"]
